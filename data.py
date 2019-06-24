@@ -67,7 +67,7 @@ def create_test_data():
 
     i = 0
     print('-'*30)
-    print('Creating training images...')
+    print('Creating testing images...')
     print('-'*30)
     for image_name in images:
         if 'mask' in image_name:
@@ -106,7 +106,7 @@ def create_valid_data():
 
     i = 0
     print('-'*30)
-    print('Creating training images...')
+    print('Creating validation images...')
     print('-'*30)
     for image_name in images:
         if 'mask' in image_name:
