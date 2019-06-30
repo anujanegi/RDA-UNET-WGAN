@@ -487,8 +487,8 @@ def train():
         masks = imgs_mask_valid[idx]
         return imgs, masks
 
-    n_rounds = 2 # number of rounds to apply adversarial training
-    batch_size = 2
+    n_rounds = 12 # number of rounds to apply adversarial training
+    batch_size = 32
 
     # Getting data and its shape
     print("Getting train and validation data...")
@@ -509,10 +509,45 @@ def train():
     steps_val_g = 1
 
     # to show the progression of the losses
-    val_gan_loss_array = np.zeros(n_rounds)
-    val_discr_loss_array = np.zeros(n_rounds)
-    gan_loss_array = np.zeros(n_rounds)
-    discr_loss_array = np.zeros(n_rounds)
+    val_gan_loss = np.zeros(n_rounds)
+    val_gan_acc = np.zeros(n_rounds)
+    val_gan_dice_coeff = np.zeros(n_rounds)
+    val_gan_sensitivity = np.zeros(n_rounds)
+    val_gan_specificity = np.zeros(n_rounds)
+    val_gan_f1score = np.zeros(n_rounds)
+    val_gan_precision = np.zeros(n_rounds)
+    val_gan_recall = np.zeros(n_rounds)
+    val_gan_mean_iou = np.zeros(n_rounds)
+
+    val_discr_loss = np.zeros(n_rounds)
+    val_discr_acc = np.zeros(n_rounds)
+    val_discr_dice_coeff = np.zeros(n_rounds)
+    val_discr_sensitivity = np.zeros(n_rounds)
+    val_discr_specificity = np.zeros(n_rounds)
+    val_discr_f1score = np.zeros(n_rounds)
+    val_discr_precision = np.zeros(n_rounds)
+    val_discr_recall = np.zeros(n_rounds)
+    val_discr_mean_iou = np.zeros(n_rounds)
+
+    gan_loss = np.zeros(n_rounds)
+    gan_acc = np.zeros(n_rounds)
+    gan_dice_coeff = np.zeros(n_rounds)
+    gan_sensitivity = np.zeros(n_rounds)
+    gan_specificity = np.zeros(n_rounds)
+    gan_f1score = np.zeros(n_rounds)
+    gan_precision = np.zeros(n_rounds)
+    gan_recall = np.zeros(n_rounds)
+    gan_mean_iou = np.zeros(n_rounds)
+
+    discr_loss = np.zeros(n_rounds)
+    discr_acc = np.zeros(n_rounds)
+    discr_dice_coeff = np.zeros(n_rounds)
+    discr_sensitivity = np.zeros(n_rounds)
+    discr_specificity = np.zeros(n_rounds)
+    discr_f1score = np.zeros(n_rounds)
+    discr_precision = np.zeros(n_rounds)
+    discr_recall = np.zeros(n_rounds)
+    discr_mean_iou = np.zeros(n_rounds)
 
     print('-' * 30)
     print('GAN training...')
@@ -529,8 +564,16 @@ def train():
             image_batch, labels_batch = get_batch_train()
             pred = model_generator.predict(image_batch)
             img_discr_batch, lab_discr_batch = imgs2discr(image_batch, labels_batch, pred)
-            loss, acc, dice, _, _, _, _, _, _ = model_discriminator.train_on_batch(img_discr_batch, lab_discr_batch)
-        discr_loss_array[n_round] = loss
+            loss, acc, dice_coef, sensitivity, specificity, f1score, precision, recall, mean_iou = model_discriminator.train_on_batch(img_discr_batch, lab_discr_batch)
+        discr_loss[n_round] = loss
+        discr_acc[n_round] = acc
+        discr_dice_coeff[n_round] = dice_coef
+        discr_sensitivity[n_round] = sensitivity
+        discr_specificity[n_round] = specificity
+        discr_f1score[n_round] = f1score
+        discr_precision[n_round] = precision
+        discr_recall[n_round] = recall
+        discr_mean_iou[n_round] = mean_iou
         print("DISCRIMINATOR Round: {0} -> Loss {1}".format((n_round+1), loss))
 
         # train GAN
@@ -538,8 +581,16 @@ def train():
         for i in range(steps_per_epoch_g):
             image_batch, labels_batch = get_batch_train()
             img_gan_batch, lab_gan_batch = imgs2gan(image_batch, labels_batch)
-            loss, acc, dice, _, _, _, _, _, _ = model_gan.train_on_batch(img_gan_batch, lab_gan_batch)
-        gan_loss_array[n_round] = loss
+            loss, acc, dice_coef, sensitivity, specificity, f1score, precision, recall, mean_iou = model_gan.train_on_batch(img_gan_batch, lab_gan_batch)
+        gan_loss[n_round] = loss
+        gan_acc[n_round] = acc
+        gan_dice_coeff[n_round] = dice_coef
+        gan_sensitivity[n_round] = sensitivity
+        gan_specificity[n_round] = specificity
+        gan_f1score[n_round] = f1score
+        gan_precision[n_round] = precision
+        gan_recall[n_round] = recall
+        gan_mean_iou[n_round] = mean_iou
         print("GAN Round: {0} -> Loss {1}".format((n_round + 1), loss))
 
         # evalutation on validation dataset
@@ -550,17 +601,33 @@ def train():
             image_val_batch, labels_val_batch = get_batch_valid()
             pred = model_generator.predict(image_val_batch)
             img_discr_val, lab_discr_val = imgs2discr(image_val_batch, labels_val_batch, pred)
-            loss_val, acc_val, dice_val, _, _, _, _, _, _ = model_discriminator.test_on_batch(img_discr_val, lab_discr_val)
-        val_discr_loss_array[n_round] = loss_val
-        print("DISCRIMINATOR Round: {0} -> Loss {1}".format((n_round+1), loss_val))
+            loss, acc, dice_coef, sensitivity, specificity, f1score, precision, recall, mean_iou = model_discriminator.test_on_batch(img_discr_val, lab_discr_val)
+        val_discr_loss[n_round] = loss
+        val_discr_acc[n_round] = acc
+        val_discr_dice_coeff[n_round] = dice_coef
+        val_discr_sensitivity[n_round] = sensitivity
+        val_discr_specificity[n_round] = specificity
+        val_discr_f1score[n_round] = f1score
+        val_discr_precision[n_round] = precision
+        val_discr_recall[n_round] = recall
+        val_discr_mean_iou[n_round] = mean_iou
+        print("DISCRIMINATOR Round: {0} -> Loss {1}".format((n_round+1), loss))
 
         # GAN
         for i in range(steps_val_g):
             image_val_batch, labels_val_batch = get_batch_valid()
             img_gan_val, lab_gan_val = imgs2gan(image_val_batch, labels_val_batch)
-            loss_val, acc_val, dice_val, _, _, _, _, _, _ = model_gan.test_on_batch(img_gan_val, lab_gan_val)
-        val_gan_loss_array[n_round] = loss_val
-        print("GAN Round: {0} -> Loss {1}".format((n_round + 1), loss_val))
+            loss, acc, dice_coef, sensitivity, specificity, f1score, precision, recall, mean_iou= model_gan.test_on_batch(img_gan_val, lab_gan_val)
+        val_gan_loss[n_round] = loss
+        val_gan_acc[n_round] = acc
+        val_gan_dice_coeff[n_round] = dice_coef
+        val_gan_sensitivity[n_round] = sensitivity
+        val_gan_specificity[n_round] = specificity
+        val_gan_f1score[n_round] = f1score
+        val_gan_precision[n_round] = precision
+        val_gan_recall[n_round] = recall
+        val_gan_mean_iou[n_round] = mean_iou
+        print("GAN Round: {0} -> Loss {1}".format((n_round + 1), loss))
 
         # save the weights of the unet
         if not os.path.exists(path_to_trained_generator_weights):
@@ -592,76 +659,13 @@ def train():
 
 
                     print("Testing done")
-        print(model_generator.train_history)
+        # print(model_generator.train_history)
 
     # print the evolution of the loss
-    print ("DISCR loss {}".format(discr_loss_array))
-    print ("GAN loss {}".format(gan_loss_array))
-    print ("DISCR validation loss {}".format(val_discr_loss_array))
-    print ("GAN validation loss {}".format(val_gan_loss_array))
-
-    #
-    #
-    # for epoch in range(epochs):
-    #
-    #         # ---------------------
-    #         #  Train Discriminator
-    #         # ---------------------
-    #         print("Training...epoch "+str(epoch))
-    #         # Select a random half of images
-    #         idx = np.random.randint(0,imgs_train.shape[0], batch_size)
-    #         imgs = imgs_train[idx]
-    #
-    #         masks = imgs_mask_train[idx]
-    #         # Sample noise and generate a batch of new images
-    #         gen_masks = model_generator.predict(imgs)
-    #
-    #         # Train the discriminator (real classified as ones and generated as zeros)
-    #         d_loss_real = model_discriminator.train_on_batch(masks, valid)
-    #         d_loss_fake = model_discriminator.train_on_batch(gen_masks, fake)
-    #         d_loss = 0.5 * np.add(d_loss_real, d_loss_fake)
-    #
-    #         # ---------------------
-    #         #  Train Generator
-    #         # ---------------------
-    #
-    #         # Train the generator (wants discriminator to mistake images as real)
-    #         g_loss = combined.train_on_batch(imgs, valid)
-    #
-    #         # generate and save images
-    #         imgs_mask_predict = model_generator.predict(imgs_test_source, verbose=1)
-    #         np.save(data_path+'predict.npy', imgs_mask_predict)
-    #         predicted_masks=np.load(data_path+'predict.npy')
-    #         predicted_masks*=255
-    #
-    #         update = "Epoch "+str(epoch)+" done."
-    #         print(update)
-    #
-    #         if epoch%10 == 0:
-    #
-    #             print("Testing...")
-    #             imgs_test, imgs_test_mask = load_test_data()
-    #             for i in range(imgs_test.shape[0]):
-    #                 img = resize(imgs_test[i], (128, 128), preserve_range=True)
-    #                 img_mask = resize(imgs_test_mask[i], (128, 128), preserve_range=True)
-    #                 im_test_source = Image.fromarray(img.astype(np.uint8))
-    #                 im_test_masks = Image.fromarray((img_mask.squeeze()).astype(np.uint8))
-    #                 im_test_predict = Image.fromarray((predicted_masks[i].squeeze()).astype(np.uint8))
-    #                 if(epoch==0):
-    #                     im_test_source_name = "Test_Image_"+str(i+1)+".png"
-    #                     im_test_gt_mask_name = "Test_Image_"+str(i+1)+"_OriginalMask.png"
-    #                     im_test_source.save(os.path.join(path_to_save_results,im_test_source_name))
-    #                     im_test_masks.save(os.path.join(path_to_save_results,im_test_gt_mask_name))
-    #                 im_test_predict_name = "Test_Image_"+str(i+1)+"_epoch_"+str(epoch)+"_Predict.png"
-    #                 im_test_predict.save(os.path.join(path_to_save_results,im_test_predict_name))
-    #
-    #
-    #             print("Testing done")
-            # Plot the progress
-            # print ("%d [D loss: %f, acc.: %.2f%%] [G loss: %f]" % (epoch, d_loss[0], 100*d_loss[1], g_loss))
-
-            # If at save interval => save generated image samples
-
+    print ("DISCR loss {}".format(discr_loss))
+    print ("GAN loss {}".format(gan_loss))
+    print ("DISCR validation loss {}".format(val_discr_loss))
+    print ("GAN validation loss {}".format(val_gan_loss))
 
     # score_1=model_generator.evaluate(imgs_train,imgs_mask_train,batch_size=32,verbose=1)
     # print(' Train loss:',score_1[0])
@@ -689,91 +693,99 @@ def train():
     # res_loss_2 = np.array(score_2)
     # np.savetxt(data_path + 'res_loss_2.txt', res_loss_2)
     #
-    # plt.plot()
-    # plt.plot(his.history['loss'], label='train loss')
-    # plt.plot(his.history['val_loss'], c='g', label='val loss')
-    # plt.title('train and val loss')
-    # plt.xlabel('epoch')
-    # plt.ylabel('accuracy')
-    # plt.legend(loc='upper right')
-    # plt.show()
-    #
-    #
-    # plt.plot()
-    # plt.plot(his.history['acc'], label='train accuracy')
-    # plt.plot(his.history['val_acc'], c='g', label='val accuracy')
-    # plt.title('train  and val acc')
-    # plt.xlabel('epoch')
-    # plt.ylabel('accuracy')
-    # plt.legend(loc='lower right')
-    # plt.show()
-    #
-    # plt.plot()
-    # plt.plot(his.history['dice_coef'], label='train dice_coef')
-    # plt.plot(his.history['val_dice_coef'], c='g', label='val dice_coef')
-    # plt.title('train  and val dice_coef')
-    # plt.xlabel('epoch')
-    # plt.ylabel('accuracy')
-    # plt.legend(loc='lower right')
-    # plt.show()
-    #
-    #
-    # plt.plot()
-    # plt.plot(his.history['sensitivity'], label='train sensitivity')
-    # plt.plot(his.history['val_sensitivity'], c='g', label='val sensitivity')
-    # plt.title('train  and val sensitivity')
-    # plt.xlabel('epoch')
-    # plt.ylabel('accuracy')
-    # plt.legend(loc='lower right')
-    # plt.show()
-    #
-    # plt.plot()
-    # plt.plot(his.history['specificity'], label='train specificity')
-    # plt.plot(his.history['val_specificity'], c='g', label='val specificity')
-    # plt.title('train  and val specificity')
-    # plt.xlabel('epoch')
-    # plt.ylabel('accuracy')
-    # plt.legend(loc='lower right')
-    # plt.show()
-    #
-    # plt.plot()
-    # plt.plot(his.history['f1score'], label='train f1score')
-    # plt.plot(his.history['val_f1score'], c='g', label='val f1score')
-    # plt.title('train  and val f1score')
-    # plt.xlabel('epoch')
-    # plt.ylabel('accuracy')
-    # plt.legend(loc='lower right')
-    # plt.show()
-    #
-    #
-    # plt.plot()
-    # plt.plot(his.history['precision'], label='train precision')
-    # plt.plot(his.history['val_precision'], c='g', label='val_precision')
-    # plt.title('train  and val precision')
-    # plt.xlabel('epoch')
-    # plt.ylabel('accuracy')
-    # plt.legend(loc='lower right')
-    # plt.show()
-    #
-    # plt.plot()
-    # plt.plot(his.history['recall'], label='train recall')
-    # plt.plot(his.history['val_recall'], c='g', label='val_recall')
-    # plt.title('train  and val recall')
-    # plt.xlabel('epoch')
-    # plt.ylabel('accuracy')
-    # plt.legend(loc='lower right')
-    # plt.show()
-    #
-    #
-    # plt.plot()
-    # plt.plot(his.history['mean_iou'], label='Train mean_iou')
-    # plt.plot(his.history['val_mean_iou'], c='g', label='val_mean_iou')
-    # plt.title('train and val mean_iou')
-    # plt.xlabel('epoch')
-    # plt.ylabel('accuracy')
-    # plt.legend(loc='lower right')
-    # plt.show()
-    #
+    plt.plot()
+    plt.plot(gan_loss, label='train loss')
+    plt.plot(val_gan_loss, c='g', label='val loss')
+    plt.title('train and val loss')
+    plt.xlabel('epoch')
+    plt.ylabel('loss')
+    plt.legend(loc='upper right')
+    plt.show()
+    plt.savefig(data_path + 'gan train and val loss.png')
+
+    plt.plot()
+    plt.plot(gan_acc, label='train accuracy')
+    plt.plot(val_gan_acc, c='g', label='val accuracy')
+    plt.title('train  and val acc')
+    plt.xlabel('epoch')
+    plt.ylabel('accuracy')
+    plt.legend(loc='lower right')
+    plt.show()
+    plt.savefig(data_path + 'gan train and val accuracy.png')
+
+    plt.plot()
+    plt.plot(gan_dice_coeff, label='train dice_coef')
+    plt.plot(val_gan_dice_coeff, c='g', label='val dice_coef')
+    plt.title('train  and val dice_coef')
+    plt.xlabel('epoch')
+    plt.ylabel('dice coefficient')
+    plt.legend(loc='lower right')
+    plt.show()
+    plt.savefig(data_path + 'gan train and val dice_coef.png')
+
+
+    plt.plot()
+    plt.plot(gan_sensitivity, label='train sensitivity')
+    plt.plot(val_gan_sensitivity, c='g', label='val sensitivity')
+    plt.title('train  and val sensitivity')
+    plt.xlabel('epoch')
+    plt.ylabel('sensitivity')
+    plt.legend(loc='lower right')
+    plt.show()
+    plt.savefig(data_path + 'gan train and val sensitivity.png')
+
+    plt.plot()
+    plt.plot(gan_specificity, label='train specificity')
+    plt.plot(val_gan_specificity, c='g', label='val specificity')
+    plt.title('train  and val specificity')
+    plt.xlabel('epoch')
+    plt.ylabel('specificity')
+    plt.legend(loc='lower right')
+    plt.show()
+    plt.savefig(data_path + 'gan train and val specificity.png')
+
+    plt.plot()
+    plt.plot(gan_f1score, label='train f1score')
+    plt.plot(val_gan_f1score, c='g', label='val f1score')
+    plt.title('train  and val f1score')
+    plt.xlabel('epoch')
+    plt.ylabel('f1score')
+    plt.legend(loc='lower right')
+    plt.show()
+    plt.savefig(data_path + 'gan train and val f1score.png')
+
+
+    plt.plot()
+    plt.plot(gan_precision, label='train precision')
+    plt.plot(val_gan_precision, c='g', label='val_precision')
+    plt.title('train  and val precision')
+    plt.xlabel('epoch')
+    plt.ylabel('precision')
+    plt.legend(loc='lower right')
+    plt.show()
+    plt.savefig(data_path + 'gan train and val precision.png')
+
+    plt.plot()
+    plt.plot(gan_recall, label='train recall')
+    plt.plot(val_gan_recall, c='g', label='val_recall')
+    plt.title('train  and val recall')
+    plt.xlabel('epoch')
+    plt.ylabel('recall')
+    plt.legend(loc='lower right')
+    plt.show()
+    plt.savefig(data_path + 'gan train and val precision.png')
+
+
+    plt.plot()
+    plt.plot(gan_mean_iou, label='Train mean_iou')
+    plt.plot(val_gan_mean_iou, c='g', label='val_mean_iou')
+    plt.title('train and val mean_iou')
+    plt.xlabel('epoch')
+    plt.ylabel('mean_iou')
+    plt.legend(loc='lower right')
+    plt.show()
+    plt.savefig(data_path + 'gan train and val mean_iou.png')
+
 
 if __name__ == '__main__':
     # model = build_res_unet()
