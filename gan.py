@@ -360,16 +360,13 @@ def build_discriminator():
     # loss of the discriminator. it is a binary loss
     def discriminator_loss(y_true, y_pred):
         #L = objectives.binary_crossentropy(K.batch_flatten(y_true), K.batch_flatten(y_pred))
-        loss = objectives.mean_squared_error(K.batch_flatten(y_true), K.batch_flatten(y_pred))
+        loss = objectives.binary_crossentropy(K.batch_flatten(y_true), K.batch_flatten(y_pred))
         return loss
 
     model.compile(optimizer=Adam(lr=1e-4), loss=discriminator_loss, metrics=['accuracy',dice_coef, sensitivity,specificity,f1score,precision,recall,mean_iou])
 
     return model
 
-
-def wasserstein_loss(y_true, y_pred):
-    return K.mean(y_true * y_pred)
 
 def build_gan(generator, discriminator):
 
@@ -385,8 +382,8 @@ def build_gan(generator, discriminator):
     def wasserstein_loss(y_true, y_pred):
         return K.mean(y_true * y_pred)
 
+    # gan.compile(optimizer=Adam(lr=1e-4), loss='binary_crossentropy', metrics=['accuracy',dice_coef, sensitivity,specificity,f1score,precision,recall,mean_iou])
     gan.compile(optimizer=Adam(lr=1e-4), loss=wasserstein_loss, metrics=['accuracy',dice_coef, sensitivity,specificity,f1score,precision,recall,mean_iou])
-
     return gan
 
 def preprocess(imgs):
@@ -700,7 +697,7 @@ def train():
     plt.xlabel('epoch')
     plt.ylabel('loss')
     plt.legend(loc='upper right')
-    plt.show()
+    # plt.show()
     plt.savefig(data_path + 'gan train and val loss.png')
 
     plt.plot()
@@ -710,7 +707,7 @@ def train():
     plt.xlabel('epoch')
     plt.ylabel('accuracy')
     plt.legend(loc='lower right')
-    plt.show()
+    # plt.show()
     plt.savefig(data_path + 'gan train and val accuracy.png')
 
     plt.plot()
@@ -720,7 +717,7 @@ def train():
     plt.xlabel('epoch')
     plt.ylabel('dice coefficient')
     plt.legend(loc='lower right')
-    plt.show()
+    # plt.show()
     plt.savefig(data_path + 'gan train and val dice_coef.png')
 
 
@@ -731,7 +728,7 @@ def train():
     plt.xlabel('epoch')
     plt.ylabel('sensitivity')
     plt.legend(loc='lower right')
-    plt.show()
+    # plt.show()
     plt.savefig(data_path + 'gan train and val sensitivity.png')
 
     plt.plot()
@@ -741,7 +738,7 @@ def train():
     plt.xlabel('epoch')
     plt.ylabel('specificity')
     plt.legend(loc='lower right')
-    plt.show()
+    # plt.show()
     plt.savefig(data_path + 'gan train and val specificity.png')
 
     plt.plot()
@@ -751,7 +748,7 @@ def train():
     plt.xlabel('epoch')
     plt.ylabel('f1score')
     plt.legend(loc='lower right')
-    plt.show()
+    # plt.show()
     plt.savefig(data_path + 'gan train and val f1score.png')
 
 
@@ -762,7 +759,7 @@ def train():
     plt.xlabel('epoch')
     plt.ylabel('precision')
     plt.legend(loc='lower right')
-    plt.show()
+    # plt.show()
     plt.savefig(data_path + 'gan train and val precision.png')
 
     plt.plot()
@@ -772,7 +769,7 @@ def train():
     plt.xlabel('epoch')
     plt.ylabel('recall')
     plt.legend(loc='lower right')
-    plt.show()
+    # plt.show()
     plt.savefig(data_path + 'gan train and val precision.png')
 
 
@@ -783,7 +780,7 @@ def train():
     plt.xlabel('epoch')
     plt.ylabel('mean_iou')
     plt.legend(loc='lower right')
-    plt.show()
+    # plt.show()
     plt.savefig(data_path + 'gan train and val mean_iou.png')
 
 
