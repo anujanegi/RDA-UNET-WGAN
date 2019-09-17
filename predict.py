@@ -1,4 +1,4 @@
-from unetdeeplidate import build_res_unet, preprocess
+from gan import build_res_unet, preprocess
 import numpy as np
 from PIL import Image
 import os
@@ -52,7 +52,7 @@ def predict():
 
     print('Loading saved weights...')
     print('-'*30)
-    model.load_weights(data_path +'unet_weights_12.h5')
+    model.load_weights(path_to_trained_generator_weights +'unet_weights_11.h5')
     print('Predicting masks on test data...')
     print('-'*30)
     imgs_mask_predict = model.predict(imgs_test_source, verbose=1)
@@ -84,7 +84,7 @@ def predict():
     print(' Test mean_iou:',res[8])
 
     res_loss = np.array(res)
-    np.save(path+'predict.npy', imgs_mask_predict)
+    np.save(path+'test_predict.npy', imgs_mask_predict)
     np.savetxt(path + 'res_loss.txt', res_loss)
 
     predicted_masks=np.load(path+'test_predict.npy')
