@@ -1,2 +1,9 @@
 rename.py
 __pycache__/
+*.hdf5
+*.npy
+*.png
+*.txt
+*.zip
+*.tif
+trained_models
