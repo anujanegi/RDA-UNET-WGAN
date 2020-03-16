@@ -37,13 +37,9 @@ img_cols =128
 
 os.environ['CUDA_VISIBLE_DEVICES'] = "0"
 
-
 data_path = './data/file/'
 path_to_save_results= data_path+"predictions/"
 path_to_trained_generator_weights = './data/trained_models/'
-
-# data_path = '/Users/xuchenyang/Documents/sec_exp/file/'
-
 
 def load_train_data():
     imgs_train = np.load(data_path + 'train.npy')
