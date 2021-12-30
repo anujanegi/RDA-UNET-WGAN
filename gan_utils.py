@@ -1,9 +1,11 @@
+"""Utility fucntions for gan training.
+"""
+
 import numpy as np
 from skimage.io import imread
 from keras.utils import to_categorical
 from random import shuffle, randint
 import time
-
 
 
 def imgs2discr(real_images, real_labels, fake_labels):
