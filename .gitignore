@@ -8,4 +8,5 @@ __pycache__/
 *.tif
 trained_models
 results
+comparisons
 
