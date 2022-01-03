@@ -2,7 +2,6 @@ rename.py
 __pycache__/
 *.hdf5
 *.npy
-*.png
 *.zip
 *.tif
 trained_models
