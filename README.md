@@ -22,6 +22,10 @@ This repository contains:
 
 Coming Soon!
 
+## Model Weights
+
+Trained models weights for RDAunet can be found [here](https://drive.google.com/file/d/1ff55Zbg-zATdhtXe8iW5eOMpir6ZOxCe/view?usp=sharing).
+
 ## Citation
 
 If our code or models aided your research, please cite our [paper](https://doi.org/10.1007/s13369-020-04480-z):
