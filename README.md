@@ -15,8 +15,9 @@ We propose a Generative Adversarial Network (GAN) based algorithm for segmenting
 
 This repository contains:
 
-* Training code for thr RDA-UNET_WGAN model
-* Several additional evaluation and visualization scripts to reproduce results from our paper
+* Training code for thr RDA-UNET-WGAN model.
+* Pre-trained RDA-UNET-WGAN model weights, including both the geneator and RDAunet model.
+* Several additional evaluation and visualization scripts to reproduce results from our paper.
 
 ## Setup
 
@@ -24,7 +25,7 @@ Coming Soon!
 
 ## Model Weights
 
-Trained models weights for RDAunet can be found [here](https://drive.google.com/file/d/1ff55Zbg-zATdhtXe8iW5eOMpir6ZOxCe/view?usp=sharing).
+Trained models weights for RDAunet, the generator model and the final RDA-UNET-WGAN can be found can be found [here](https://drive.google.com/drive/folders/1DyGY7ALXfCyPiQ6NXli2u0LobHiAl0oj?usp=sharing).
 
 ## Citation
 
